@@ -6,6 +6,7 @@ export const fetchCache = "force-no-store";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 
 // Wrap the main component in Suspense
 export default function ResetPasswordPage() {
@@ -32,6 +33,9 @@ function ResetPasswordLoading() {
 }
 
 function ResetPassword() {
+  // Force dynamic rendering, no caching
+  noStore();
+
   const params = useSearchParams();
   const router = useRouter();
 
