@@ -1,45 +1,16 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-
-import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
-import { unstable_noStore as noStore } from "next/cache";
 
-// Wrap the main component in Suspense
-export default function ResetPasswordPage() {
-  return (
-    <Suspense fallback={<ResetPasswordLoading />}>
-      <ResetPassword />
-    </Suspense>
-  );
+interface PageProps {
+  params: { token: string };
 }
 
-function ResetPasswordLoading() {
-  return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-sm">
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-            Reset your password
-          </h1>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ResetPassword() {
-  // Force dynamic rendering, no caching
-  noStore();
-
-  const params = useSearchParams();
+export default function ResetPasswordPage({ params }: PageProps) {
   const router = useRouter();
-
-  const token = params.get("token");
+  const { token } = params; // token comes from the dynamic route, not from query string
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -89,7 +60,7 @@ function ResetPassword() {
         setPassword("");
         setConfirmPassword("");
         setTimeout(() => {
-          router.push("/login");
+          router.push("/users/login"); // adjust to your actual login path
         }, 2000);
       } else {
         setMessage(data.error || "Failed to reset password");
@@ -109,35 +80,9 @@ function ResetPassword() {
     }
   };
 
-  // Handle case when token is missing
-  if (!token) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-sm">
-          <div className="mb-8">
-            <h1 className="text-2xl font-semibold text-gray-900 mb-2">
-              Invalid reset link
-            </h1>
-            <p className="text-gray-600">
-              This password reset link is invalid or has expired.
-            </p>
-          </div>
-          <Link
-            href="/forgot-password"
-            className="w-full bg-gray-900 text-white px-4 py-2.5 rounded font-medium
-                     hover:bg-gray-800 transition-colors text-sm text-center block"
-          >
-            Request new reset link
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-semibold text-gray-900 mb-2">
             Reset your password
@@ -147,9 +92,7 @@ function ResetPassword() {
           </p>
         </div>
 
-        {/* Form */}
         <div className="space-y-5">
-          {/* New Password */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
               New password
@@ -190,7 +133,6 @@ function ResetPassword() {
             <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
           </div>
 
-          {/* Confirm Password */}
           <div>
             <label htmlFor="confirm" className="block text-sm font-medium text-gray-900 mb-2">
               Confirm password
@@ -230,7 +172,6 @@ function ResetPassword() {
             </div>
           </div>
 
-          {/* Message */}
           {message && (
             <div
               className={`text-sm px-4 py-3 rounded ${
@@ -243,7 +184,6 @@ function ResetPassword() {
             </div>
           )}
 
-          {/* Submit Button */}
           <button
             onClick={handleReset}
             disabled={loading || !password.trim() || !confirmPassword.trim()}
@@ -255,11 +195,10 @@ function ResetPassword() {
           </button>
         </div>
 
-        {/* Footer */}
         <div className="mt-6 text-center text-sm">
           <p className="text-gray-600">
             Remember your password?{" "}
-            <Link href="/login" className="text-gray-900 font-medium hover:underline">
+            <Link href="/users/login" className="text-gray-900 font-medium hover:underline">
               Sign in
             </Link>
           </p>
