@@ -1,4 +1,4 @@
-////"use client";
+"use client";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -32,7 +32,7 @@ export default function ResetPasswordPage({ params }: { params: { token: string 
       const data = await res.json();
       if (res.ok) {
         setMessage("Success! Redirecting...");
-        setTimeout(() => router.push("/users/login"), 2000);
+        setTimeout(() => router.push("/login"), 2000);
       } else {
         setMessage(data.error || "Failed");
         setError(true);
@@ -81,7 +81,7 @@ export default function ResetPasswordPage({ params }: { params: { token: string 
         </button>
 
         <p className="text-center text-sm mt-4">
-          Remember? <Link href="/users/login" className="font-medium hover:underline">Sign in</Link>
+          Remember? <Link href="/login" className="font-medium hover:underline">Sign in</Link>
         </p>
       </div>
     </div>
