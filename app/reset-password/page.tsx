@@ -1,12 +1,37 @@
 "use client";
 
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 
-export default function ResetPassword() {
+// Wrap the main component in Suspense
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<ResetPasswordLoading />}>
+      <ResetPassword />
+    </Suspense>
+  );
+}
+
+function ResetPasswordLoading() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm">
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+            Reset your password
+          </h1>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ResetPassword() {
   const params = useSearchParams();
   const router = useRouter();
 
@@ -79,6 +104,31 @@ export default function ResetPassword() {
       handleReset();
     }
   };
+
+  // Handle case when token is missing
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-sm">
+          <div className="mb-8">
+            <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+              Invalid reset link
+            </h1>
+            <p className="text-gray-600">
+              This password reset link is invalid or has expired.
+            </p>
+          </div>
+          <Link
+            href="/forgot-password"
+            className="w-full bg-gray-900 text-white px-4 py-2.5 rounded font-medium
+                     hover:bg-gray-800 transition-colors text-sm text-center block"
+          >
+            Request new reset link
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
